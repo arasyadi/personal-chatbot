@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Academic AI Assistant - Asisten Dosen</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://js.puter.com/v2/"></script>
     <style>
@@ -40,7 +41,7 @@
         .academic-container {
             display: flex;
             width: 100%;
-            max-width: 1200px;
+            max-width: 1400px;
             height: 90vh;
             background: white;
             border-radius: 20px;
@@ -52,7 +53,6 @@
             width: 300px;
             background: var(--primary);
             color: white;
-            padding: 30px 20px;
             display: flex;
             flex-direction: column;
             position: relative;
@@ -60,11 +60,12 @@
         }
         
         .header {
-            margin-bottom: 30px;
+            padding: 30px 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .header h1 {
-            font-size: 24px;
+            font-size: 22px;
             margin-bottom: 5px;
             color: white;
             display: flex;
@@ -73,52 +74,110 @@
         }
         
         .header p {
-            font-size: 14px;
+            font-size: 13px;
             opacity: 0.8;
         }
         
-        .model-selector {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 20px;
+        .chat-sessions {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
         }
         
-        .model-selector label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 500;
+        .sessions-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
         }
         
-        .model-selector select {
-            width: 100%;
-            padding: 12px 15px;
-            border-radius: 10px;
-            border: none;
-            background: var(--dark);
-            color: white;
-            font-size: 15px;
-            cursor: pointer;
-        }
-        
-        .model-info {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 15px;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-        
-        .model-info h3 {
-            margin-bottom: 10px;
+        .sessions-header h3 {
+            font-size: 16px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
         
+        .new-chat-btn {
+            background: var(--secondary);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s;
+        }
+        
+        .new-chat-btn:hover {
+            background: var(--accent);
+        }
+        
+        .session-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .session-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .session-item.active {
+            background: var(--secondary);
+        }
+        
+        .session-content {
+            flex: 1;
+        }
+        
+        .session-title {
+            font-weight: 500;
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .session-preview {
+            font-size: 12px;
+            opacity: 0.7;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .session-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .session-action {
+            background: none;
+            border: none;
+            color: white;
+            padding: 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+            font-size: 12px;
+        }
+        
+        .session-action:hover {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
         .features {
-            margin-top: auto;
-            padding-top: 20px;
+            padding: 20px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
         
@@ -127,6 +186,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 16px;
         }
         
         .feature {
@@ -134,7 +194,7 @@
             align-items: center;
             gap: 10px;
             margin-bottom: 12px;
-            font-size: 14px;
+            font-size: 13px;
         }
         
         .chat-container {
@@ -146,7 +206,7 @@
         }
         
         .chat-header {
-            padding: 20px 25px;
+            padding: 20px 25px 15px;
             background: white;
             border-bottom: 1px solid #e0e0e0;
             display: flex;
@@ -158,6 +218,21 @@
         .chat-header h2 {
             color: var(--primary);
             font-size: 22px;
+        }
+        
+        .chat-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .model-selector {
+            background: var(--prof-light);
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-size: 14px;
+            cursor: pointer;
         }
         
         .status {
@@ -206,6 +281,10 @@
             border-bottom-right-radius: 5px;
         }
         
+        .user-message:hover .message-actions {
+            opacity: 1;
+        }
+        
         .bot-message {
             align-self: flex-start;
             background: white;
@@ -231,10 +310,115 @@
             color: rgba(255, 255, 255, 0.9);
         }
         
+        .message-actions {
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            display: flex;
+            gap: 5px;
+        }
+        
+        .action-btn {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--dark);
+        }
+        
+        .action-btn:hover {
+            background: var(--light);
+            border-color: var(--secondary);
+        }
+        
+        .attached-doc {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+        
+        .doc-icon {
+            color: var(--warning);
+        }
+        
         .input-area {
             padding: 20px;
             background: white;
             border-top: 1px solid #e0e0e0;
+        }
+        
+        .file-upload-area {
+            margin-bottom: 15px;
+        }
+        
+        .file-input-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .file-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            background: var(--light);
+            color: var(--dark);
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .file-label:hover {
+            background: #e8f4f8;
+            border-color: var(--secondary);
+        }
+        
+        .uploaded-files {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .uploaded-file {
+            background: var(--secondary);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .remove-file {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0 2px;
+            border-radius: 50%;
+            font-size: 14px;
+        }
+        
+        .remove-file:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
         
         .input-container {
@@ -346,6 +530,58 @@
             margin-top: 5px;
         }
         
+        .edit-form {
+            display: none;
+            margin-top: 10px;
+        }
+        
+        .edit-form.active {
+            display: block;
+        }
+        
+        .edit-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--secondary);
+            border-radius: 10px;
+            font-size: 14px;
+            margin-bottom: 10px;
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .edit-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-save, .btn-cancel {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .btn-save {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-cancel {
+            background: var(--light);
+            color: var(--dark);
+        }
+        
+        .btn-save:hover {
+            background: #219a52;
+        }
+        
+        .btn-cancel:hover {
+            background: #d5dbdb;
+        }
+        
         /* Responsiveness */
         @media (max-width: 768px) {
             .academic-container {
@@ -355,7 +591,7 @@
             
             .sidebar {
                 width: 100%;
-                max-height: 250px;
+                max-height: 200px;
             }
             
             .message {
@@ -368,45 +604,49 @@
     <div class="academic-container">
         <div class="sidebar">
             <div class="header">
-                <h1><i class="fas fa-graduation-cap"></i> Academic AI Assistant</h1>
-                <p>Asisten pribadi untuk tugas akademik dosen</p>
+                <h1><i class="fas fa-graduation-cap"></i> Academic AI</h1>
+                <p>Asisten pribadi untuk tugas akademik</p>
             </div>
             
-            <div class="model-selector">
-                <label for="model"><i class="fas fa-brain"></i> MODEL AI</label>
-                <select id="model">
-                    <option value="claude-sonnet-4">Claude Sonnet 4 (Rekomendasi)</option>
-                    <option value="claude-opus-4">Claude Opus 4 (Advanced)</option>
-                </select>
-            </div>
-            
-            <div class="model-info">
-                <h3><i class="fas fa-info-circle"></i> Tentang Model</h3>
-                <p><strong>Claude Sonnet 4:</strong> Cepat dan efisien, cocok untuk sebagian besar kebutuhan akademik sehari-hari.</p>
-                <p><strong>Claude Opus 4:</strong> Kemampuan tinggi untuk tugas kompleks seperti analisis riset dan penulisan akademik.</p>
+            <div class="chat-sessions">
+                <div class="sessions-header">
+                    <h3><i class="fas fa-history"></i> Riwayat Chat</h3>
+                    <button class="new-chat-btn" id="newChatBtn">
+                        <i class="fas fa-plus"></i> Baru
+                    </button>
+                </div>
+                <div id="sessionsList">
+                    <div class="session-item active" data-session="1">
+                        <div class="session-content">
+                            <div class="session-title">Chat Saat Ini</div>
+                            <div class="session-preview">Selamat datang di Academic AI...</div>
+                        </div>
+                        <div class="session-actions">
+                            <button class="session-action" title="Hapus">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div class="features">
                 <h3><i class="fas fa-star"></i> Kemampuan</h3>
                 <div class="feature">
                     <i class="fas fa-check-circle"></i>
-                    <span>Penjelasan konsep akademik</span>
+                    <span>Analisis dokumen</span>
                 </div>
                 <div class="feature">
                     <i class="fas fa-check-circle"></i>
-                    <span>Bantuan penulisan makalah</span>
+                    <span>Bantuan penulisan</span>
                 </div>
                 <div class="feature">
                     <i class="fas fa-check-circle"></i>
-                    <span>Analisis data penelitian</span>
+                    <span>Penjelasan konsep</span>
                 </div>
                 <div class="feature">
                     <i class="fas fa-check-circle"></i>
-                    <span>Persiapan materi kuliah</span>
-                </div>
-                <div class="feature">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Review literatur akademik</span>
+                    <span>Review penelitian</span>
                 </div>
             </div>
         </div>
@@ -414,9 +654,15 @@
         <div class="chat-container">
             <div class="chat-header">
                 <h2><i class="fas fa-comments"></i> AI Assistant Chat</h2>
-                <div class="status">
-                    <div class="status-dot"></div>
-                    <span>Claude Sonnet 4 siap membantu</span>
+                <div class="chat-controls">
+                    <select class="model-selector" id="model">
+                        <option value="claude-sonnet-4">Claude Sonnet 4</option>
+                        <option value="claude-opus-4">Claude Opus 4</option>
+                    </select>
+                    <div class="status">
+                        <div class="status-dot"></div>
+                        <span id="statusText">Claude Sonnet 4 siap membantu</span>
+                    </div>
                 </div>
             </div>
             
@@ -427,18 +673,31 @@
                         <span>Academic Assistant</span>
                     </div>
                     <div class="message-content">
-                        Selamat datang, Bapak/Ibu Dosen! Saya Academic AI Assistant yang siap membantu tugas-tugas akademik Anda. Bagaimana saya bisa membantu hari ini? Berikut beberapa ide:
+                        Selamat datang, Bapak/Ibu Dosen! Saya Academic AI Assistant yang siap membantu tugas-tugas akademik Anda. 
                         <br><br>
-                        • Membantu menyusun materi kuliah<br>
-                        • Menjelaskan konsep akademik kompleks<br>
-                        • Mereview draft penelitian<br>
-                        • Menganalisis data penelitian<br>
-                        • Menyiapkan soal ujian
+                        <strong>Fitur baru:</strong><br>
+                        • 📎 <em>Lampirkan dokumen</em> untuk analisis mendalam<br>
+                        • ✏️ <em>Edit pesan</em> yang telah dikirim<br>
+                        • 💾 <em>Riwayat chat</em> tersimpan otomatis<br>
+                        • 🔄 <em>Ganti model AI</em> sesuai kebutuhan<br>
+                        <br>
+                        Bagaimana saya bisa membantu hari ini?
                     </div>
                 </div>
             </div>
             
             <div class="input-area">
+                <div class="file-upload-area">
+                    <div class="file-input-container">
+                        <input type="file" id="fileInput" class="file-input" multiple accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg">
+                        <label for="fileInput" class="file-label">
+                            <i class="fas fa-paperclip"></i>
+                            Lampirkan dokumen
+                        </label>
+                    </div>
+                    <div class="uploaded-files" id="uploadedFiles"></div>
+                </div>
+                
                 <div class="input-container">
                     <input type="text" id="userInput" placeholder="Tulis pertanyaan atau instruksi...">
                     <button id="sendButton">
@@ -458,21 +717,158 @@
             const userInput = document.getElementById('userInput');
             const sendButton = document.getElementById('sendButton');
             const modelSelect = document.getElementById('model');
+            const statusText = document.getElementById('statusText');
+            const fileInput = document.getElementById('fileInput');
+            const uploadedFiles = document.getElementById('uploadedFiles');
+            const newChatBtn = document.getElementById('newChatBtn');
+            const sessionsList = document.getElementById('sessionsList');
+            
+            let currentSession = 1;
+            let sessions = {
+                1: {
+                    title: 'Chat Saat Ini',
+                    messages: [],
+                    files: []
+                }
+            };
+            let attachedFiles = [];
+            let messageCounter = 0;
             
             // Update status based on model selection
             modelSelect.addEventListener('change', function() {
-                const status = document.querySelector('.status span');
                 if (this.value === 'claude-sonnet-4') {
-                    status.textContent = 'Claude Sonnet 4 siap membantu';
+                    statusText.textContent = 'Claude Sonnet 4 siap membantu';
                 } else {
-                    status.textContent = 'Claude Opus 4 siap membantu';
+                    statusText.textContent = 'Claude Opus 4 siap membantu';
                 }
             });
             
+            // File upload handling
+            fileInput.addEventListener('change', function(e) {
+                const files = Array.from(e.target.files);
+                files.forEach(file => {
+                    if (!attachedFiles.some(f => f.name === file.name && f.size === file.size)) {
+                        attachedFiles.push(file);
+                        displayUploadedFile(file);
+                    }
+                });
+            });
+            
+            function displayUploadedFile(file) {
+                const fileDiv = document.createElement('div');
+                fileDiv.className = 'uploaded-file';
+                fileDiv.innerHTML = `
+                    <i class="fas fa-file"></i>
+                    <span>${file.name}</span>
+                    <button class="remove-file" onclick="removeFile('${file.name}')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                uploadedFiles.appendChild(fileDiv);
+            }
+            
+            window.removeFile = function(fileName) {
+                attachedFiles = attachedFiles.filter(file => file.name !== fileName);
+                const fileElements = uploadedFiles.querySelectorAll('.uploaded-file');
+                fileElements.forEach(el => {
+                    if (el.textContent.includes(fileName)) {
+                        el.remove();
+                    }
+                });
+            };
+            
+            // New chat session
+            newChatBtn.addEventListener('click', function() {
+                currentSession = Date.now();
+                sessions[currentSession] = {
+                    title: 'Chat Baru',
+                    messages: [],
+                    files: []
+                };
+                
+                // Clear chat
+                chatHistory.innerHTML = `
+                    <div class="message bot-message">
+                        <div class="message-header">
+                            <i class="fas fa-robot"></i>
+                            <span>Academic Assistant</span>
+                        </div>
+                        <div class="message-content">
+                            Selamat datang di chat baru! Bagaimana saya bisa membantu Anda hari ini?
+                        </div>
+                    </div>
+                `;
+                
+                // Clear files
+                attachedFiles = [];
+                uploadedFiles.innerHTML = '';
+                
+                // Update sessions list
+                updateSessionsList();
+            });
+            
+            function updateSessionsList() {
+                const sessionItems = sessionsList.querySelectorAll('.session-item');
+                sessionItems.forEach(item => item.classList.remove('active'));
+                
+                // Add new session to list if not exists
+                if (!document.querySelector(`[data-session="${currentSession}"]`)) {
+                    const newSessionItem = document.createElement('div');
+                    newSessionItem.className = 'session-item active';
+                    newSessionItem.setAttribute('data-session', currentSession);
+                    newSessionItem.innerHTML = `
+                        <div class="session-content">
+                            <div class="session-title">${sessions[currentSession].title}</div>
+                            <div class="session-preview">Chat baru dimulai...</div>
+                        </div>
+                        <div class="session-actions">
+                            <button class="session-action" onclick="deleteSession(${currentSession})" title="Hapus">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    sessionsList.appendChild(newSessionItem);
+                } else {
+                    document.querySelector(`[data-session="${currentSession}"]`).classList.add('active');
+                }
+            }
+            
+            window.deleteSession = function(sessionId) {
+                if (Object.keys(sessions).length > 1) {
+                    delete sessions[sessionId];
+                    document.querySelector(`[data-session="${sessionId}"]`).remove();
+                    
+                    if (currentSession == sessionId) {
+                        const remainingSessions = Object.keys(sessions);
+                        currentSession = remainingSessions[remainingSessions.length - 1];
+                        loadSession(currentSession);
+                    }
+                }
+            };
+            
+            function loadSession(sessionId) {
+                currentSession = sessionId;
+                updateSessionsList();
+                // Here you would load the session messages
+                // For demo purposes, we'll keep it simple
+            }
+            
             // Add message to chat history
-            function addMessage(role, content) {
+            function addMessage(role, content, files = []) {
+                messageCounter++;
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${role}-message`;
+                messageDiv.setAttribute('data-message-id', messageCounter);
+                
+                let filesHtml = '';
+                if (files.length > 0) {
+                    filesHtml = files.map(file => `
+                        <div class="attached-doc">
+                            <i class="fas fa-file doc-icon"></i>
+                            <span>${file.name}</span>
+                        </div>
+                    `).join('');
+                }
                 
                 if (role === 'user') {
                     messageDiv.innerHTML = `
@@ -480,7 +876,26 @@
                             <i class="fas fa-user-graduate"></i>
                             <span>Anda</span>
                         </div>
-                        <div class="message-content">${content}</div>
+                        <div class="message-content">
+                            ${filesHtml}
+                            <div class="text-content">${content}</div>
+                        </div>
+                        <div class="message-actions">
+                            <button class="action-btn" onclick="editMessage(${messageCounter})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                        </div>
+                        <div class="edit-form" id="editForm${messageCounter}">
+                            <textarea class="edit-input" id="editInput${messageCounter}">${content}</textarea>
+                            <div class="edit-buttons">
+                                <button class="btn-save" onclick="saveEdit(${messageCounter})">
+                                    <i class="fas fa-check"></i> Simpan
+                                </button>
+                                <button class="btn-cancel" onclick="cancelEdit(${messageCounter})">
+                                    <i class="fas fa-times"></i> Batal
+                                </button>
+                            </div>
+                        </div>
                     `;
                 } else {
                     messageDiv.innerHTML = `
@@ -495,6 +910,64 @@
                 chatHistory.appendChild(messageDiv);
                 chatHistory.scrollTop = chatHistory.scrollHeight;
                 return messageDiv;
+            }
+            
+            // Edit message functions
+            window.editMessage = function(messageId) {
+                const editForm = document.getElementById(`editForm${messageId}`);
+                editForm.classList.add('active');
+            };
+            
+            window.saveEdit = function(messageId) {
+                const editInput = document.getElementById(`editInput${messageId}`);
+                const messageDiv = document.querySelector(`[data-message-id="${messageId}"]`);
+                const textContent = messageDiv.querySelector('.text-content');
+                
+                textContent.textContent = editInput.value;
+                cancelEdit(messageId);
+                
+                // Optionally regenerate AI response
+                const nextMessage = messageDiv.nextElementSibling;
+                if (nextMessage && nextMessage.classList.contains('bot-message')) {
+                    regenerateResponse(editInput.value, nextMessage);
+                }
+            };
+            
+            window.cancelEdit = function(messageId) {
+                const editForm = document.getElementById(`editForm${messageId}`);
+                editForm.classList.remove('active');
+            };
+            
+            async function regenerateResponse(newUserMessage, botMessageDiv) {
+                const contentDiv = botMessageDiv.querySelector('.message-content');
+                contentDiv.innerHTML = '<div class="thinking"><span>Meregenerasi respons...</span><div class="dot-flashing"></div></div>';
+                
+                try {
+                    const model = modelSelect.value;
+                    let prompt = newUserMessage;
+                    
+                    // Add file context if any
+                    if (attachedFiles.length > 0) {
+                        prompt += '\n\n[Dokumen terlampir: ' + attachedFiles.map(f => f.name).join(', ') + ']';
+                    }
+                    
+                    const response = await puter.ai.chat(prompt, {
+                        model: model,
+                        stream: true
+                    });
+                    
+                    contentDiv.innerHTML = '';
+                    
+                    for await (const part of response) {
+                        if (part?.text) {
+                            contentDiv.innerHTML += part.text;
+                            chatHistory.scrollTop = chatHistory.scrollHeight;
+                        }
+                    }
+                    
+                } catch (error) {
+                    contentDiv.innerHTML = `Maaf, terjadi kesalahan saat meregenerasi respons: ${error.message}`;
+                }
             }
             
             // Show thinking indicator
@@ -512,22 +985,80 @@
                 return thinkingDiv;
             }
             
+            // Process file content for AI context
+            async function processFiles(files) {
+                let fileContext = '';
+                
+                for (const file of files) {
+                    try {
+                        if (file.type.startsWith('text/')) {
+                            const text = await file.text();
+                            fileContext += `\n\n=== Konten ${file.name} ===\n${text}\n`;
+                        } else if (file.type === 'application/pdf') {
+                            fileContext += `\n\n=== Dokumen PDF: ${file.name} ===\n[PDF terlampir - mohon analisis berdasarkan konten dokumen]\n`;
+                        } else if (file.type.startsWith('image/')) {
+                            fileContext += `\n\n=== Gambar: ${file.name} ===\n[Gambar terlampir - mohon analisis visual]\n`;
+                        } else {
+                            fileContext += `\n\n=== Dokumen: ${file.name} ===\n[Dokumen terlampir - ${file.type}]\n`;
+                        }
+                    } catch (error) {
+                        console.error(`Error processing file ${file.name}:`, error);
+                        fileContext += `\n\n=== ${file.name} ===\n[Error membaca file]\n`;
+                    }
+                }
+                
+                return fileContext;
+            }
+            
             // Send message to Claude
             async function sendMessage() {
                 const message = userInput.value.trim();
-                if (!message) return;
+                if (!message && attachedFiles.length === 0) return;
+                
+                // Process attached files
+                let fileContext = '';
+                if (attachedFiles.length > 0) {
+                    fileContext = await processFiles(attachedFiles);
+                }
                 
                 // Add user message to chat
-                addMessage('user', message);
+                addMessage('user', message, attachedFiles);
+                
+                // Update session title if this is the first message
+                if (sessions[currentSession].messages.length === 0) {
+                    const title = message.substring(0, 30) + (message.length > 30 ? '...' : '');
+                    sessions[currentSession].title = title;
+                    const sessionItem = document.querySelector(`[data-session="${currentSession}"] .session-title`);
+                    if (sessionItem) sessionItem.textContent = title;
+                }
+                
+                // Store message in session
+                sessions[currentSession].messages.push({
+                    role: 'user',
+                    content: message,
+                    files: [...attachedFiles]
+                });
+                
                 userInput.value = '';
                 sendButton.disabled = true;
+                
+                // Clear attached files for display
+                const currentFiles = [...attachedFiles];
+                attachedFiles = [];
+                uploadedFiles.innerHTML = '';
                 
                 // Show thinking indicator
                 const thinkingIndicator = showThinking();
                 
                 try {
                     const model = modelSelect.value;
-                    const response = await puter.ai.chat(message, {
+                    let fullPrompt = message;
+                    
+                    if (fileContext) {
+                        fullPrompt += fileContext;
+                    }
+                    
+                    const response = await puter.ai.chat(fullPrompt, {
                         model: model,
                         stream: true
                     });
@@ -540,15 +1071,23 @@
                     const contentDiv = botMessage.querySelector('.message-content');
                     
                     // Stream the response
+                    let fullResponse = '';
                     for await (const part of response) {
                         if (part?.text) {
-                            contentDiv.innerHTML += part.text;
+                            fullResponse += part.text;
+                            contentDiv.innerHTML = fullResponse;
                             chatHistory.scrollTop = chatHistory.scrollHeight;
                         }
                     }
                     
-                    // Add some finishing touches
-                    contentDiv.innerHTML += '<div style="margin-top:15px;font-size:0.9em;color:#7f8c8d;"><i class="fas fa-lightbulb"></i> <em>Anda bisa meminta penjelasan lebih lanjut atau meminta contoh konkret jika diperlukan</em></div>';
+                    // Store bot response in session
+                    sessions[currentSession].messages.push({
+                        role: 'bot',
+                        content: fullResponse
+                    });
+                    
+                    // Add finishing touches
+                    contentDiv.innerHTML += '<div style="margin-top:15px;font-size:0.9em;color:#7f8c8d;"><i class="fas fa-lightbulb"></i> <em>Anda bisa meminta penjelasan lebih lanjut atau mengedit pesan di atas</em></div>';
                     
                 } catch (error) {
                     console.error('Error:', error);
@@ -559,17 +1098,131 @@
                 sendButton.disabled = false;
             }
             
+            // Session management
+            sessionsList.addEventListener('click', function(e) {
+                const sessionItem = e.target.closest('.session-item');
+                if (sessionItem && !e.target.closest('.session-action')) {
+                    const sessionId = sessionItem.getAttribute('data-session');
+                    loadSession(sessionId);
+                }
+            });
+            
             // Event listeners
             sendButton.addEventListener('click', sendMessage);
             userInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
                     sendMessage();
                 }
             });
             
+            // Drag and drop file upload
+            const inputArea = document.querySelector('.input-area');
+            
+            inputArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                inputArea.style.backgroundColor = '#f0f8ff';
+            });
+            
+            inputArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                inputArea.style.backgroundColor = '';
+            });
+            
+            inputArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                inputArea.style.backgroundColor = '';
+                
+                const files = Array.from(e.dataTransfer.files);
+                files.forEach(file => {
+                    if (!attachedFiles.some(f => f.name === file.name && f.size === file.size)) {
+                        attachedFiles.push(file);
+                        displayUploadedFile(file);
+                    }
+                });
+            });
+            
+            // Auto-save sessions to localStorage
+            function saveSessions() {
+                try {
+                    localStorage.setItem('academicAI_sessions', JSON.stringify(sessions));
+                    localStorage.setItem('academicAI_currentSession', currentSession.toString());
+                } catch (error) {
+                    console.warn('Could not save sessions to localStorage:', error);
+                }
+            }
+            
+            // Load sessions from localStorage
+            function loadSessions() {
+                try {
+                    const savedSessions = localStorage.getItem('academicAI_sessions');
+                    const savedCurrentSession = localStorage.getItem('academicAI_currentSession');
+                    
+                    if (savedSessions) {
+                        sessions = JSON.parse(savedSessions);
+                    }
+                    
+                    if (savedCurrentSession) {
+                        currentSession = parseInt(savedCurrentSession);
+                    }
+                    
+                    // Rebuild sessions list
+                    sessionsList.innerHTML = '';
+                    Object.keys(sessions).forEach(sessionId => {
+                        const session = sessions[sessionId];
+                        const sessionItem = document.createElement('div');
+                        sessionItem.className = `session-item ${sessionId == currentSession ? 'active' : ''}`;
+                        sessionItem.setAttribute('data-session', sessionId);
+                        
+                        const preview = session.messages.length > 0 
+                            ? session.messages[0].content.substring(0, 50) + '...'
+                            : 'Chat kosong';
+                        
+                        sessionItem.innerHTML = `
+                            <div class="session-content">
+                                <div class="session-title">${session.title}</div>
+                                <div class="session-preview">${preview}</div>
+                            </div>
+                            <div class="session-actions">
+                                <button class="session-action" onclick="deleteSession(${sessionId})" title="Hapus">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        `;
+                        sessionsList.appendChild(sessionItem);
+                    });
+                    
+                } catch (error) {
+                    console.warn('Could not load sessions from localStorage:', error);
+                }
+            }
+            
+            // Save sessions periodically
+            setInterval(saveSessions, 30000); // Save every 30 seconds
+            
+            // Save sessions on page unload
+            window.addEventListener('beforeunload', saveSessions);
+            
+            // Load sessions on startup
+            loadSessions();
+            
             // Initial focus on input
             userInput.focus();
+            
+            // Update session preview when messages are added
+            function updateSessionPreview() {
+                const sessionItem = document.querySelector(`[data-session="${currentSession}"] .session-preview`);
+                if (sessionItem && sessions[currentSession].messages.length > 0) {
+                    const lastMessage = sessions[currentSession].messages[sessions[currentSession].messages.length - 1];
+                    sessionItem.textContent = lastMessage.content.substring(0, 50) + '...';
+                }
+            }
+            
+            // Override addMessage to update session preview
+            const originalAddMessage = addMessage;
+            addMessage = function(role, content, files = []) {
+                const result = originalAddMessage(role, content, files);
+                updateSessionPreview();
+                return result;
+            };
         });
-    </script>
-</body>
-</html>
