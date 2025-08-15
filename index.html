@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic AI Assistant - Asisten Dosen</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://js.puter.com/v2/"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #2980b9;
+            --light: #ecf0f1;
+            --dark: #34495e;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --prof-light: #f8f9fa;
+            --prof-dark: #212529;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary), #1a2530);
+            color: var(--prof-dark);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .academic-container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            height: 90vh;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+        }
+        
+        .sidebar {
+            width: 300px;
+            background: var(--primary);
+            color: white;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .header {
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .model-selector {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .model-selector label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        
+        .model-selector select {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: none;
+            background: var(--dark);
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        
+        .model-info {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .model-info h3 {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .features {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .features h3 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+        
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--prof-light);
+            position: relative;
+        }
+        
+        .chat-header {
+            padding: 20px 25px;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .chat-header h2 {
+            color: var(--primary);
+            font-size: 22px;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--success);
+            font-weight: 500;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--success);
+            border-radius: 50%;
+        }
+        
+        .chat-history {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 18px 22px;
+            border-radius: 18px;
+            line-height: 1.6;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .user-message {
+            align-self: flex-end;
+            background: var(--secondary);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .bot-message {
+            align-self: flex-start;
+            background: white;
+            color: var(--prof-dark);
+            border: 1px solid #e0e0e0;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .bot-message .message-header {
+            color: var(--accent);
+        }
+        
+        .user-message .message-header {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .input-area {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .input-container input {
+            flex: 1;
+            padding: 18px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .input-container input:focus {
+            border-color: var(--secondary);
+        }
+        
+        .input-container button {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 0 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .input-container button:hover {
+            background: var(--accent);
+        }
+        
+        .input-container button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+        
+        .thinking {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 25px;
+            background: white;
+            color: var(--dark);
+            border-radius: 15px;
+            align-self: flex-start;
+            border: 1px solid #e0e0e0;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+        
+        .dot-flashing {
+            position: relative;
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+            background-color: var(--secondary);
+            color: var(--secondary);
+            animation: dotFlashing 1s infinite linear alternate;
+            animation-delay: 0.5s;
+        }
+        
+        .dot-flashing::before, .dot-flashing::after {
+            content: '';
+            display: inline-block;
+            position: absolute;
+            top: 0;
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+            background-color: var(--secondary);
+            color: var(--secondary);
+        }
+        
+        .dot-flashing::before {
+            left: -15px;
+            animation: dotFlashing 1s infinite alternate;
+            animation-delay: 0s;
+        }
+        
+        .dot-flashing::after {
+            left: 15px;
+            animation: dotFlashing 1s infinite alternate;
+            animation-delay: 1s;
+        }
+        
+        @keyframes dotFlashing {
+            0% { background-color: var(--secondary); }
+            50%, 100% { background-color: #b0d7f5; }
+        }
+        
+        .powered-by {
+            text-align: center;
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        /* Responsiveness */
+        @media (max-width: 768px) {
+            .academic-container {
+                flex-direction: column;
+                height: 95vh;
+            }
+            
+            .sidebar {
+                width: 100%;
+                max-height: 250px;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="academic-container">
+        <div class="sidebar">
+            <div class="header">
+                <h1><i class="fas fa-graduation-cap"></i> Academic AI Assistant</h1>
+                <p>Asisten pribadi untuk tugas akademik dosen</p>
+            </div>
+            
+            <div class="model-selector">
+                <label for="model"><i class="fas fa-brain"></i> MODEL AI</label>
+                <select id="model">
+                    <option value="claude-sonnet-4">Claude Sonnet 4 (Rekomendasi)</option>
+                    <option value="claude-opus-4">Claude Opus 4 (Advanced)</option>
+                </select>
+            </div>
+            
+            <div class="model-info">
+                <h3><i class="fas fa-info-circle"></i> Tentang Model</h3>
+                <p><strong>Claude Sonnet 4:</strong> Cepat dan efisien, cocok untuk sebagian besar kebutuhan akademik sehari-hari.</p>
+                <p><strong>Claude Opus 4:</strong> Kemampuan tinggi untuk tugas kompleks seperti analisis riset dan penulisan akademik.</p>
+            </div>
+            
+            <div class="features">
+                <h3><i class="fas fa-star"></i> Kemampuan</h3>
+                <div class="feature">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Penjelasan konsep akademik</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Bantuan penulisan makalah</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Analisis data penelitian</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Persiapan materi kuliah</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Review literatur akademik</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chat-container">
+            <div class="chat-header">
+                <h2><i class="fas fa-comments"></i> AI Assistant Chat</h2>
+                <div class="status">
+                    <div class="status-dot"></div>
+                    <span>Claude Sonnet 4 siap membantu</span>
+                </div>
+            </div>
+            
+            <div class="chat-history" id="chatHistory">
+                <div class="message bot-message">
+                    <div class="message-header">
+                        <i class="fas fa-robot"></i>
+                        <span>Academic Assistant</span>
+                    </div>
+                    <div class="message-content">
+                        Selamat datang, Bapak/Ibu Dosen! Saya Academic AI Assistant yang siap membantu tugas-tugas akademik Anda. Bagaimana saya bisa membantu hari ini? Berikut beberapa ide:
+                        <br><br>
+                        • Membantu menyusun materi kuliah<br>
+                        • Menjelaskan konsep akademik kompleks<br>
+                        • Mereview draft penelitian<br>
+                        • Menganalisis data penelitian<br>
+                        • Menyiapkan soal ujian
+                    </div>
+                </div>
+            </div>
+            
+            <div class="input-area">
+                <div class="input-container">
+                    <input type="text" id="userInput" placeholder="Tulis pertanyaan atau instruksi...">
+                    <button id="sendButton">
+                        <i class="fas fa-paper-plane"></i> Kirim
+                    </button>
+                </div>
+                <div class="powered-by">
+                    Powered by PuterAI & Claude AI
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatHistory = document.getElementById('chatHistory');
+            const userInput = document.getElementById('userInput');
+            const sendButton = document.getElementById('sendButton');
+            const modelSelect = document.getElementById('model');
+            
+            // Update status based on model selection
+            modelSelect.addEventListener('change', function() {
+                const status = document.querySelector('.status span');
+                if (this.value === 'claude-sonnet-4') {
+                    status.textContent = 'Claude Sonnet 4 siap membantu';
+                } else {
+                    status.textContent = 'Claude Opus 4 siap membantu';
+                }
+            });
+            
+            // Add message to chat history
+            function addMessage(role, content) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${role}-message`;
+                
+                if (role === 'user') {
+                    messageDiv.innerHTML = `
+                        <div class="message-header">
+                            <i class="fas fa-user-graduate"></i>
+                            <span>Anda</span>
+                        </div>
+                        <div class="message-content">${content}</div>
+                    `;
+                } else {
+                    messageDiv.innerHTML = `
+                        <div class="message-header">
+                            <i class="fas fa-robot"></i>
+                            <span>Academic Assistant</span>
+                        </div>
+                        <div class="message-content">${content}</div>
+                    `;
+                }
+                
+                chatHistory.appendChild(messageDiv);
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+                return messageDiv;
+            }
+            
+            // Show thinking indicator
+            function showThinking() {
+                const thinkingDiv = document.createElement('div');
+                thinkingDiv.className = 'thinking';
+                thinkingDiv.id = 'thinkingIndicator';
+                thinkingDiv.innerHTML = `
+                    <span>Mengetik</span>
+                    <div class="dot-flashing"></div>
+                `;
+                
+                chatHistory.appendChild(thinkingDiv);
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+                return thinkingDiv;
+            }
+            
+            // Send message to Claude
+            async function sendMessage() {
+                const message = userInput.value.trim();
+                if (!message) return;
+                
+                // Add user message to chat
+                addMessage('user', message);
+                userInput.value = '';
+                sendButton.disabled = true;
+                
+                // Show thinking indicator
+                const thinkingIndicator = showThinking();
+                
+                try {
+                    const model = modelSelect.value;
+                    const response = await puter.ai.chat(message, {
+                        model: model,
+                        stream: true
+                    });
+                    
+                    // Remove thinking indicator
+                    thinkingIndicator.remove();
+                    
+                    // Create bot message element
+                    const botMessage = addMessage('bot', '');
+                    const contentDiv = botMessage.querySelector('.message-content');
+                    
+                    // Stream the response
+                    for await (const part of response) {
+                        if (part?.text) {
+                            contentDiv.innerHTML += part.text;
+                            chatHistory.scrollTop = chatHistory.scrollHeight;
+                        }
+                    }
+                    
+                    // Add some finishing touches
+                    contentDiv.innerHTML += '<div style="margin-top:15px;font-size:0.9em;color:#7f8c8d;"><i class="fas fa-lightbulb"></i> <em>Anda bisa meminta penjelasan lebih lanjut atau meminta contoh konkret jika diperlukan</em></div>';
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    thinkingIndicator.remove();
+                    addMessage('bot', `Maaf, terjadi kesalahan: ${error.message}. Silakan coba lagi.`);
+                }
+                
+                sendButton.disabled = false;
+            }
+            
+            // Event listeners
+            sendButton.addEventListener('click', sendMessage);
+            userInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // Initial focus on input
+            userInput.focus();
+        });
+    </script>
+</body>
+</html>
